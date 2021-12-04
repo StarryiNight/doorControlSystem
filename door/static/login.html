@@ -1,0 +1,142 @@
+{{define "/templates/login.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LoginScreen</title>
+    <link rel="shortcut icon" href="#" />
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <style>
+        html,body{/*设置height好使得entire能占满整个页面*/
+            margin: 0;
+            width:100%;
+            height:100%;
+
+        }
+        .entire{/*大的框架*/
+            height: 100%;
+            background-image: url("../image/image1.jpg");
+            background-repeat: no-repeat;
+            overflow-x:hidden ;
+        }
+        .vertical{   /*帮助上下左右对齐,登录框*/
+            background-color: rgba(251, 253, 253, 1);
+            padding: 20px 40px;
+            border-radius: 40px;
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            margin-left: -173px;
+            box-shadow: 0px 0px 10px 1px rgba(178, 243, 238, 0.84);
+        }
+        .prompt{
+            text-align: center;
+            padding-bottom:25px ;
+
+        }
+        .account_number,.account_password{
+            margin-bottom: 15px;
+        }
+        .prompt_title{
+            font-family: 华文宋体;
+            font-size: 15px;
+            color: rgba(49, 44, 44, 0.84);
+        }
+        .tag_font{/*提交提示字*/
+            font-size: 20px;
+            font-family: 华文宋体;
+            color: #767E7EFF;
+        }
+        #headline{
+            font-size: 20px;
+            color: transparent;
+            -webkit-text-stroke: 1px #363667;
+            letter-spacing: 0.04em;
+        }
+        .login_font{/*提交按键*/
+            font-size: 15px;
+        }
+        input{/*输入框*/
+            height: 30px;
+            width: 200px;
+            border-radius: 200px;
+            border:none;
+            padding-left: 15px;
+            background-color: rgba(172, 187, 187, 0.81);
+            outline: none;
+        }
+        .button{/*按钮*/
+            border-radius: 400px;
+            border: none;
+            background-color: rgba(173, 171, 171, 0.53);
+            width: 80px;
+            padding: 10px;
+            position: relative;
+            left: 100px;
+        }
+        .button:hover{/*鼠标移向按钮*/
+            background-color:rgba(128, 128, 128, 0.3) ;
+        }
+        input:hover{/*鼠标移向输入框*/
+            background-color: rgba(172, 187, 187, 0.51);
+        }
+
+    </style>
+    <script>
+        window.onload = function (){
+            var button = document.getElementById("submit");
+            var name = document.getElementById("account");
+            name.value ="";
+            var password = document.getElementById("password");
+            button.onclick = function (){
+                var nameText = name.value;
+                var passwordText = password.value;
+                if (nameText == "" ||passwordText == "") {
+
+                    alert("请正确输入");
+                } else {
+                    var jsonData=JSON.stringify({"user_name":nameText,"password":passwordText});
+                    $.ajax({
+                        url:"/login",
+                        type:"POST",
+                        data:jsonData,
+                        contentType: 'application/json;charset=utf-8',
+                        success:function (data) {
+                            if (data["msg"] == "登录成功") {
+                                alert("登录成功");
+                                window.location = "/home?token"+"="+data["token"];
+                            }else{
+                                password.value = "";
+                                alert("密码错误");
+                            }
+                        },
+                        fail:function (data) {
+                            console.log(data);
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="entire">
+
+
+    <div class="vertical">
+        <div class="prompt"><hr><span class="prompt_title" id="headline">用户登录</span><hr></div>
+        <div class="account_number">
+            <span class="tag_font">账号:</span>
+            <input type="text" name="account_number" placeholder="请输入账号" id="account">
+        </div>
+        <div class="account_password">
+            <span class="tag_font" >密码:</span>
+            <input type="password" name="password" placeholder="请输入密码" id="password"></div>
+        <button class="button" id="submit"><span class="login_font">登录</span></button>
+    </div>
+    <div class="login_image"></div>
+</div>
+</body>
+</html>
+
+{{end}}
