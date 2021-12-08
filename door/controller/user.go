@@ -50,6 +50,30 @@ func LoginHandler(c *gin.Context) {
 
 }
 
+func RegisterHandler(c *gin.Context) {
+	p := new(models.User)
+	if err := c.ShouldBind(p); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": "请求参数错误",
+			"err": err.Error(),
+		})
+		return
+	}
+	//2.业务逻辑处理
+	err := mysql.Regiser(p)
+	fmt.Println(err)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": "注册失败",
+			"err": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "注册成功",
+	})
+}
+
 
 func ScanUsersHandler(c *gin.Context){
 	users,err:=mysql.ScanUser()

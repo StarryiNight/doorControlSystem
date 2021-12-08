@@ -1,15 +1,9 @@
 #include <ESP8266WiFi.h>
-
-
-#define SERIAL_RX_BUFFER_SIZE  512  // 接收缓冲区
-
-#define SERIAL_TX_BUFFER_SIZE  512  // 发送缓冲区
-
 #define led 2
 const char *ssid = "Nuclear Fusion Reactor";//网络的ssid
-const char *password = "liuyu1026";//wifi密码
+const char *password = "********";//wifi密码
 const char *host = "192.168.43.166";//Server服务端的IP
-WiFiClient client;//客户端对象，用于与服务器进行连接
+WiFiClient client;
 const int tcpPort = 8266;//Server服务端的端口号
 static String comdata = "";
 static String val = "";
@@ -19,9 +13,9 @@ void setup() {
     pinMode(led, OUTPUT);
     delay(10);
     Serial.println();
-    Serial.print("Connecting to ");//会通过usb转tll模块发送到电脑，通过ide集成的串口监视器可以获取数据。
+    Serial.print("Connecting to ");
     Serial.println(ssid);
-    WiFi.begin(ssid, password);//启动
+    WiFi.begin(ssid, password);
     //检测是否成功连接到目标网络，未连接则阻塞。
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
@@ -30,6 +24,7 @@ void setup() {
     Serial.println("WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
+    Serial.println("*");
 }
 
 void loop() {
@@ -70,7 +65,7 @@ void listenServer() {
 
 
     while (client.available()) {
-//    char val = client.read();//read()表示从网络中读取数据。
+//    char val = client.read();
         while (client.available() > 0) {
             val += char(client.read());
         }

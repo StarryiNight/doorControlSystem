@@ -8,24 +8,32 @@ import (
 import "door/controller"
 
 func Setup() *gin.Engine {
+
 	r := gin.Default()
-	r.LoadHTMLGlob("static/*")
-	r.StaticFS("/image",http.Dir("/image"))
-	r.StaticFS("/static",http.Dir("/static"))
+
+	r.Static("/image","./static/image")
+
+	r.LoadHTMLGlob("static/templates/*")
+
+
 	r.Use(middlewares.Cors())
 	//渲染页面
 	r.GET("/login", func(c *gin.Context) {
-		c.HTML(http.StatusOK,"/templates/login.html",nil)
+		c.HTML(http.StatusOK,"login.html",nil)
 	})
-	r.GET("/home",middlewares.JWTAuthMiddleware(),func(c *gin.Context) {
-		c.HTML(http.StatusOK,"/templates/home.html",nil)
+	r.GET("/home",func(c *gin.Context) {
+		c.HTML(http.StatusOK,"home.html",nil)
+	})
+	r.GET("register", func(c *gin.Context) {
+		c.HTML(http.StatusOK,"register.html",nil)
 	})
 
 	//建立tcp连接
 	r.GET("/connect", controller.TcpInitHandler)
 	//登陆
 	r.POST("/login", controller.LoginHandler)
-
+	//注册
+	r.POST("/register",controller.RegisterHandler)
 	//发送消息
 	r.POST("/send",middlewares.JWTAuthMiddleware(), controller.SendMsgHandler)
 

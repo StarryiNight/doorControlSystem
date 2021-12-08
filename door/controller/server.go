@@ -102,6 +102,7 @@ func ConnectionHandle(conn net.Conn, c *gin.Context) {
 		fmt.Println("json.Unmarshal() failed ", err)
 		return
 	}
+	fmt.Println(user)
 	err = mysql.AddRecord(user)
 	if err != nil {
 		fmt.Println("mysql.AddRecord() failed ", err)
@@ -183,14 +184,34 @@ func UpdateCardHandler(c *gin.Context) {
 		})
 		return
 	}
-	_, err = Conn.Write(jsonData)
+
+	var str string
+	for i,r:=range jsonData{
+		str+=string(r)
+		if (i+1)%63==0 {
+			_, err = Conn.Write([]byte(str))
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{
+					"msg": "send failed",
+					"err": err,
+				})
+				return
+			}
+
+			str=""
+		}
+	}
+	_, err = Conn.Write([]byte(str))
+
+/*	_, err = Conn.Write(jsonData)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"msg": "send failed",
 			"err": err,
 		})
 		return
-	}
+	}*/
+
 	_, err = Conn.Write([]byte("*"))
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{

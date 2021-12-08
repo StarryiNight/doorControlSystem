@@ -1,0 +1,166 @@
+{{define "register.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+    <title>Document</title>
+    <style>
+        *{
+            user-select: none;
+            /* 无法选中，整体感更强 */
+        }
+
+        body{
+
+            background: url(image/wallpaper.jpg) no-repeat fixed;
+            background-size: 100% 100%;
+        }
+
+        .login{
+            position: absolute;
+            top: 50%;
+            margin-top: -250px;
+            left: 50%;
+            margin-left: -200px;
+            /* absolute居中的一种方法 */
+            background-color: whitesmoke;
+            width: 400px;
+            height: 500px;
+            border-radius: 25px;
+            text-align: center;
+            padding: 5px 40px;
+            box-sizing: border-box;
+            /* 这样padding就不会影响大小 */
+        }
+
+        p{
+            font-size: 42px;
+            font-weight: 600;
+        }
+
+        input{
+            background-color: whitesmoke;
+            width: 100%;
+            height: 48px;
+            margin-bottom: 10px;
+            border: none;
+            border-bottom: 2px solid silver;
+            /* 下面的会覆盖上面的步伐 */
+            outline: none;
+            font-size: 22px;
+        }
+
+        .btn{
+            background-color: #59c2c5;
+            width: 38%;
+            height: 48px;
+            border-radius: 8px;
+
+            font-size: 28px;
+            font-weight: 600;
+            color: white;
+            position: relative;
+            top: 30px;
+            left: -45px;
+        }
+        .btn:hover{
+            background-color: #59c2a0;
+        }
+        #prompt{
+            visibility: hidden;
+            position: relative;
+            top: -25px;
+            left: -35px;
+            font-size: 10px;
+            color: #f53737;
+        }
+    </style>
+    <script>
+        var xml;
+        function sendData(way = "post",url,data,fun = null){
+            xml = new XMLHttpRequest();
+            xml.onreadystatechange = fun;
+            xml.open(way,url,true);
+            data && xml.send(data);
+        }
+
+        window.onload = function (){
+            var button = document.getElementById("submit");
+            var name = document.getElementById("account");
+            var id = document.getElementById("id");
+            var password1 = document.getElementById("password1");
+            var password2 = document.getElementById("password2");
+            var prompt = document.getElementById("prompt");
+            name.value ="";
+            password2.onkeyup = function (){
+                if(password2.value !== password1.value){
+                    prompt.style.visibility = "visible";
+                } else {
+                    prompt.style.visibility = "";
+                }
+            }
+            button.onclick = function (){
+                if(id.value == "" || name.value == "" || password1.value == "" || password2.value == ""){
+                    alert("请完整填写数据");
+                }else{
+                    var data = JSON.stringify(
+                        {
+                            "card_id" : id.value,
+                            "user_name" : name.value,
+                            "password" : password2.value,
+                        }
+                    );
+                    $.ajax({
+                        url:"/register",
+                        type:"POST",
+                        data:data,
+                        contentType: 'application/json;charset=utf-8',
+                        success:function (data) {
+                            if (data["msg"] == "注册成功") {
+                                alert("注册成功");
+                                window.location = "/login";
+                            }
+                        },
+                        fail:function (data) {
+                            console.log(data);
+                        }
+                    });
+                }
+
+
+
+            }
+                }
+
+    </script>
+</head>
+<body>
+<div class="entire">
+    <div class="login">
+        <div class="vertical">
+            <p>Register</p>
+            <div class="card_id">
+                <input type="text" name="card_id" placeholder="请输入卡号" id="id">
+            </div>
+            <div class="account_number">
+                <input type="text" name="account_number" placeholder="请输入账号" id="account">
+            </div>
+            <div>
+                <input type="password" name="password1" placeholder="请输入密码" id="password1">
+            </div>
+            <div>
+                <input type="password" name="password2" placeholder="请再次输入密码" id="password2">
+            </div>
+            <span id="prompt" >两次输入密码不一致</span>
+            <button class="btn" id="submit"><span>注册</span></button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+{{end}}

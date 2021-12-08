@@ -69,3 +69,12 @@ func Login(u *models.ParamUser) ( *models.User, error) {
 	return &user,nil
 }
 
+func Regiser(u *models.User) (err error) {
+	sqlStr:=`insert into user(card_id,user_name,password)values(?,?,?)`
+	_, err = db.Exec(sqlStr, u.CardId, u.UserName, u.Password)
+	if err != nil {
+		return err
+	}
+	return
+}
+
